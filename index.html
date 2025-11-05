@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        
+        input.valid, select.valid {
+            border-color: #2ecc71;
+        }
+        
+        input.invalid, select.invalid {
+            border-color: #e74c3c;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #357ae8;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .phone-hint {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .gender-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .gender-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .gender-option input {
+            width: auto;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Регистрация пользователя</h1>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" name="username" required minlength="3">
+                <div class="error-message" id="usernameError">Имя пользователя должно содержать не менее 3 символов</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Пол</label>
+                <div class="gender-options">
+                    <div class="gender-option">
+                        <input type="radio" id="male" name="gender" value="male" required>
+                        <label for="male">Мужской</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="female" name="gender" value="female">
+                        <label for="female">Женский</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="other" name="gender" value="other">
+                        <label for="other">Другой</label>
+                    </div>
+                </div>
+                <div class="error-message" id="genderError">Пожалуйста, выберите пол</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div class="error-message" id="emailError">Введите корректный email адрес</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" maxlength="10">
+                <div class="phone-hint">Формат: 10 цифр без кода страны (например: 1234567890)</div>
+                <div class="error-message" id="phoneError">Телефон должен содержать ровно 10 цифр</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required minlength="8">
+                <div class="error-message" id="passwordError">Пароль должен содержать не менее 8 символов</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Подтверждение пароля</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <div class="error-message" id="confirmPasswordError">Пароли не совпадают</div>
+            </div>
+            
+            <button type="submit" id="submitButton">Зарегистрироваться</button>
+        </form>
+        
+        <div class="success-message" id="successMessage">
+            Регистрация прошла успешно!
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registrationForm');
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const genderInputs = document.querySelectorAll('input[name="gender"]');
+            const submitButton = document.getElementById('submitButton');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Функция для проверки валидности поля
+            function validateField(field, errorElement, customValidation = null) {
+                const isValid = field.checkValidity() && (customValidation ? customValidation(field) : true);
+                
+                if (isValid) {
+                    field.classList.remove('invalid');
+                    field.classList.add('valid');
+                    errorElement.style.display = 'none';
+                } else {
+                    field.classList.remove('valid');
+                    field.classList.add('invalid');
+                    errorElement.style.display = 'block';
+                }
+                
+                return isValid;
+            }
+            
+            // Валидация выбора пола
+            function validateGender() {
+                const isSelected = Array.from(genderInputs).some(input => input.checked);
+                const errorElement = document.getElementById('genderError');
+                
+                if (isSelected) {
+                    errorElement.style.display = 'none';
+                    // Добавляем визуальную индикацию для выбранного пола
+                    genderInputs.forEach(input => {
+                        if (input.checked) {
+                            input.parentElement.classList.add('valid');
+                            input.parentElement.classList.remove('invalid');
+                        } else {
+                            input.parentElement.classList.remove('valid', 'invalid');
+                        }
+                    });
+                } else {
+                    errorElement.style.display = 'block';
+                    genderInputs.forEach(input => {
+                        input.parentElement.classList.remove('valid');
+                        input.parentElement.classList.add('invalid');
+                    });
+                }
+                
+                return isSelected;
+            }
+            
+            // Специальная валидация для подтверждения пароля
+            function validatePasswordMatch() {
+                const isValid = password.value === confirmPassword.value;
+                const errorElement = document.getElementById('confirmPasswordError');
+                
+                if (isValid) {
+                    confirmPassword.classList.remove('invalid');
+                    confirmPassword.classList.add('valid');
+                    errorElement.style.display = 'none';
+                } else {
+                    confirmPassword.classList.remove('valid');
+                    confirmPassword.classList.add('invalid');
+                    errorElement.style.display = 'block';
+                }
+                
+                return isValid;
+            }
+            
+            // Валидация номера телефона (только цифры)
+            function validatePhone(field) {
+                return /^[0-9]{10}$/.test(field.value);
+            }
+            
+            // Обработчики событий для валидации в реальном времени
+            username.addEventListener('input', function() {
+                validateField(username, document.getElementById('usernameError'));
+            });
+            
+            email.addEventListener('input', function() {
+                validateField(email, document.getElementById('emailError'));
+            });
+            
+            phone.addEventListener('input', function() {
+                // Разрешаем ввод только цифр
+                phone.value = phone.value.replace(/\D/g, '');
+                validateField(phone, document.getElementById('phoneError'), validatePhone);
+            });
+            
+            password.addEventListener('input', function() {
+                validateField(password, document.getElementById('passwordError'));
+                validatePasswordMatch();
+            });
+            
+            confirmPassword.addEventListener('input', function() {
+                validatePasswordMatch();
+            });
+            
+            // Обработчики для выбора пола
+            genderInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    validateGender();
+                });
+            });
+            
+            // Обработчик отправки формы
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Проверяем все поля
+                const isUsernameValid = validateField(username, document.getElementById('usernameError'));
+                const isEmailValid = validateField(email, document.getElementById('emailError'));
+                const isPhoneValid = validateField(phone, document.getElementById('phoneError'), validatePhone);
+                const isPasswordValid = validateField(password, document.getElementById('passwordError'));
+                const isPasswordMatchValid = validatePasswordMatch();
+                const isGenderValid = validateGender();
+                
+                // Если все поля валидны
+                if (isUsernameValid && isEmailValid && isPhoneValid && isPasswordValid && isPasswordMatchValid && isGenderValid) {
+                    // Показываем сообщение об успехе
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    
+                    // Сбрасываем классы валидации
+                    const inputs = form.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        input.classList.remove('valid', 'invalid');
+                    });
+                    
+                    // Сбрасываем классы для пола
+                    genderInputs.forEach(input => {
+                        input.parentElement.classList.remove('valid', 'invalid');
+                    });
+                    
+                    // Скрываем сообщение через 5 секунд
+                    setTimeout(function() {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
